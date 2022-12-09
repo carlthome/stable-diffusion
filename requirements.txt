@@ -1,5 +1,5 @@
 accelerate==0.14.0
-certifi==2022.9.24
+certifi==2022.12.7
 charset-normalizer==2.1.1
 diffusers==0.7.2
 filelock==3.8.0
