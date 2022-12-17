@@ -1,8 +1,13 @@
 import torch
 from diffusers import StableDiffusionPipeline
 
-device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-# TODO mps if macOS M1
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+elif torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
+print(f"{device=}")
 
 pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
 pipe = pipe.to(device)
