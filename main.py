@@ -1,5 +1,17 @@
+import argparse
+
 import torch
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusionPipeline, StableDiffusionXLPipeline
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--prompt", type=str, default="A painting of a cat")
+parser.add_argument("--xl", action="store_true")
+args = parser.parse_args()
+
+if args.prompt == "":
+    prompt = input("Text prompt: ")
+else:
+    prompt = args.prompt
 
 if torch.backends.mps.is_available():
     device = torch.device("mps")
@@ -9,11 +21,16 @@ else:
     device = torch.device("cpu")
 print(f"{device=}")
 
-pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
+if args.xl:
+    pipe = StableDiffusionXLPipeline.from_pretrained(
+        "stabilityai/stable-diffusion-xl-base-1.0"
+    )
+else:
+    pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
+
 pipe = pipe.to(device)
 pipe.enable_attention_slicing()
 
-prompt = input("Text prompt: ")
 image = pipe(prompt).images[0]
 
 image.save(f"{prompt.lower().replace(' ', '_')}.png")
