@@ -4,14 +4,14 @@ import torch
 from diffusers import StableDiffusionPipeline, StableDiffusionXLPipeline
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--prompt", type=str, default="A painting of a cat")
+parser.add_argument("--prompt", type=str)
 parser.add_argument("--xl", action="store_true")
 args = parser.parse_args()
 
-if args.prompt == "":
-    prompt = input("Text prompt: ")
-else:
+if args.prompt:
     prompt = args.prompt
+else:
+    prompt = input("Text prompt: ")
 
 if torch.backends.mps.is_available():
     device = torch.device("mps")
