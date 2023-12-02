@@ -6,6 +6,7 @@ from diffusers import StableDiffusionPipeline, StableDiffusionXLPipeline
 parser = argparse.ArgumentParser()
 parser.add_argument("--prompt", type=str)
 parser.add_argument("--xl", action="store_true")
+parser.add_argument("--turbo", action="store_true")
 args = parser.parse_args()
 
 if args.prompt:
@@ -22,15 +23,21 @@ else:
 print(f"{device=}")
 
 if args.xl:
-    pipe = StableDiffusionXLPipeline.from_pretrained(
-        "stabilityai/stable-diffusion-xl-base-1.0"
-    )
+    pipe = StableDiffusionXLPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0")
+elif args.turbo:
+    pipe = StableDiffusionXLPipeline.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16")
 else:
     pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
 
 pipe = pipe.to(device)
 pipe.enable_attention_slicing()
 
-image = pipe(prompt).images[0]
+settings = {}
+
+if args.turbo:
+    settings["num_inference_steps"] = 1
+    settings["guidance_scale"] = 0.0
+
+image = pipe(prompt, **settings).images[0]
 
 image.save(f"{prompt.lower().replace(' ', '_')}.png")
