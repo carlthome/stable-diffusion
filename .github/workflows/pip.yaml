@@ -19,3 +19,6 @@ jobs:
 
       - name: Install dependencies
         run: pip install .
+
+      - name: Display main program help
+        run: python -m main --help
