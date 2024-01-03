@@ -10,8 +10,8 @@ python -m venv .venv
 .venv/bin/activate
 
 # Install dependencies.
-pip install -r requirements.txt
+pip install .
 
 # Run the example.
-python main.py
+python -m main
 ```
