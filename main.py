@@ -29,8 +29,12 @@ def main():
             "stabilityai/stable-diffusion-xl-base-1.0"
         )
     elif args.turbo:
+        if device == torch.device("cpu"):
+            kwargs = {}
+        else:
+            kwargs = dict(torch_dtype=torch.float16, variant="fp16")
         pipe = StableDiffusionXLPipeline.from_pretrained(
-            "stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16"
+            "stabilityai/sdxl-turbo", **kwargs
         )
     else:
         pipe = StableDiffusionPipeline.from_pretrained("runwayml/stable-diffusion-v1-5")
